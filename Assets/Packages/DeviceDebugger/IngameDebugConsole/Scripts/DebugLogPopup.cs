@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using TMPro;
+using ThanhDV.DeviceDebugger;
+
 #if UNITY_EDITOR && UNITY_2021_1_OR_NEWER
 using Screen = UnityEngine.Device.Screen; // To support Device Simulator on Unity 2021.1+
 #endif
@@ -10,8 +12,9 @@ using Screen = UnityEngine.Device.Screen; // To support Device Simulator on Unit
 // Manager class for the debug popup
 namespace IngameDebugConsole
 {
-	public class DebugLogPopup : MonoBehaviour//, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+	public class DebugLogPopup : MonoBehaviour, IPointerClickHandler//, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
+		[Space]
 		private RectTransform popupTransform;
 
 		// Dimensions of the popup divided by 2
@@ -54,9 +57,6 @@ namespace IngameDebugConsole
 		private IEnumerator moveToPosCoroutine = null;
 
 		public bool IsVisible { get; private set; }
-
-		[Space]
-		[SerializeField] private DeviceDebuggerController deviceDebbuger;
 
 		private void Awake()
 		{
@@ -135,9 +135,7 @@ namespace IngameDebugConsole
 		public void OnPointerClick(PointerEventData data)
 		{
 			// Hide the popup and show the log window
-			// OpenConsoleWindow();
-
-
+			OpenConsoleWindow();
 		}
 
 		public void OpenConsoleWindow()

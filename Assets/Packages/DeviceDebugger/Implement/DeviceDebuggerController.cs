@@ -1,11 +1,15 @@
 using System.Threading.Tasks;
 using IngameDebugConsole;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ThanhDV.DeviceDebugger
 {
     public class DeviceDebuggerController : MonoBehaviour
     {
+        [Space]
+        [SerializeField] private bool dontDestroyOnLoad = true;
+
         [Header("Active Module")]
         [SerializeField] private bool showFPS = true;
         [SerializeField] private bool showRAM = true;
@@ -14,44 +18,66 @@ namespace ThanhDV.DeviceDebugger
         [SerializeField] private bool showADVANCED = true;
 
         [Header("Module")]
-        [SerializeField] private GameObject moduleFPS;
-        [SerializeField] private GameObject moduleRAM;
-        [SerializeField] private GameObject moduleAUDIO;
-        [SerializeField] private GameObject moduleCONSOLE;
-        [SerializeField] private GameObject moduleADVANCED;
+        [SerializeField] private RectTransform moduleFPS;
+        [SerializeField] private RectTransform moduleRAM;
+        [SerializeField] private RectTransform moduleAUDIO;
+        [SerializeField] private RectTransform moduleCONSOLE;
+        [SerializeField] private RectTransform moduleADVANCED;
 
         [Header("Other Reference")]
-        [SerializeField] private DebugLogPopup debugLogPopup;
         [SerializeField] private RectTransform sideBar;
+        [SerializeField] private DebugLogPopup logPopup;
+
+        private void Awake()
+        {
+            if (dontDestroyOnLoad) DontDestroyOnLoad(gameObject);
+        }
 
         private void OnEnable()
         {
             Show();
+            DebugLogManager.Instance.OnLogWindowShown += OnLogWindowShown;
+            DebugLogManager.Instance.OnLogWindowHidden += OnLogWindowHidden;
         }
 
-        public void OnBtnLogPopupClicked()
+        private void OnDisable()
         {
-            debugLogPopup.OpenConsoleWindow();
+            DebugLogManager.Instance.OnLogWindowShown -= OnLogWindowShown;
+            DebugLogManager.Instance.OnLogWindowHidden -= OnLogWindowHidden;
         }
 
-        private async void ReloadUI()
+        private void ReloadUI()
         {
-            await Task.Yield();
+            LayoutRebuilder.MarkLayoutForRebuild(sideBar);
+        }
 
-            Vector2 anchorPos = sideBar.anchoredPosition;
-            anchorPos.y = -sideBar.rect.height / 2f - 10f;
-            sideBar.anchoredPosition = anchorPos;
+        private void OnLogWindowShown()
+        {
+            moduleFPS.localScale = new(1, 0, 1);
+            moduleRAM.localScale = new(1, 0, 1);
+            moduleAUDIO.localScale = new(1, 0, 1);
+            moduleADVANCED.localScale = new(1, 0, 1);
+        }
+
+        private void OnLogWindowHidden()
+        {
+            Show();
         }
 
         private void Show()
         {
-            moduleFPS.SetActive(showFPS);
-            moduleRAM.SetActive(showRAM);
-            moduleAUDIO.SetActive(showAUDIO);
-            moduleCONSOLE.SetActive(showCONSOLE);
-            moduleADVANCED.SetActive(showADVANCED);
+            moduleFPS.localScale = showFPS ? Vector3.one : new(1, 0, 1);
+            moduleRAM.localScale = showRAM ? Vector3.one : new(1, 0, 1);
+            moduleAUDIO.localScale = showAUDIO ? Vector3.one : new(1, 0, 1);
+            moduleCONSOLE.localScale = showCONSOLE ? Vector3.one : new(1, 0, 1);
+            moduleADVANCED.localScale = showADVANCED ? Vector3.one : new(1, 0, 1);
 
             ReloadUI();
+        }
+
+        public void OnBtnOpenConsoleClicked()
+        {
+            logPopup.OpenConsoleWindow();
         }
 
         private void OnValidate()

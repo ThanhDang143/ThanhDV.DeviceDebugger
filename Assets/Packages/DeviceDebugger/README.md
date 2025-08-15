@@ -27,4 +27,4 @@ https://github.com/ThanhDang143/ThanhDV.DeviceDebugger.git?path=/Assets/Packages
 - Press the **Packages** button, choose "**My Registries**"
 
 ## How to use.
-- Drag n Drop prefab `DeviceDebugger` to scene.
+See the README for each utility.

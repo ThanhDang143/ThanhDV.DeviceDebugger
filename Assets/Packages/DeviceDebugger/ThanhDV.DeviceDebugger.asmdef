@@ -1,8 +1,8 @@
 {
-    "name": "DeviceDebugger.Implement",
-    "rootNamespace": "DeviceDebugger",
+    "name": "ThanhDV.DeviceDebugger",
+    "rootNamespace": "ThanhDV.DeviceDebugger",
     "references": [
-        "GUID:92a8f274efdd1a64cbd49fea6a674c5a"
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
