@@ -70,9 +70,13 @@ namespace IngameDebugConsole
 
 			Vector2 pos = popupTransform.anchoredPosition;
 			if (pos.x != 0f || pos.y != 0f)
+			{
 				normalizedPosition = pos.normalized; // Respect the initial popup position set in the prefab
+			}
 			else
+			{
 				normalizedPosition = new Vector2(0.5f, 0f); // Right edge by default
+			}
 		}
 
 		public void NewLogsArrived(int newInfo, int newWarning, int newError)
