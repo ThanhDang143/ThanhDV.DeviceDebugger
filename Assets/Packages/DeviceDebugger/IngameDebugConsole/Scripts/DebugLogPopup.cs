@@ -54,7 +54,7 @@ namespace IngameDebugConsole
 		private Vector2 normalizedPosition;
 
 		// Coroutines for simple code-based animations
-		private IEnumerator moveToPosCoroutine = null;
+		// private IEnumerator moveToPosCoroutine = null;
 
 		public bool IsVisible { get; private set; }
 
