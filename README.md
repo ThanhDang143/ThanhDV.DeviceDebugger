@@ -28,7 +28,10 @@ https://github.com/ThanhDang143/ThanhDV.DeviceDebugger.git?path=/Assets/Packages
 
 ## How to use.
 To add the debugger to your scene, use one of the following menu options:
-- **Tools > Device Debugger > Add to Scene**
+- **Tools > ThanhDV > Device Debugger > Add to Scene**
 - **GameObject > Device Debugger**
+
+To remove the debugger from your scene:
+- **Tools > ThanhDV > Device Debugger > Remove from Scene**
 
 ⚠️ You only need one `DeviceDebugger` object in your project. It's best to place it in your main or starting scene.

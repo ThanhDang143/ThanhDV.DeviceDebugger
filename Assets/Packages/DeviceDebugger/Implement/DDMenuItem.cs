@@ -12,7 +12,26 @@ namespace ThanhDV.DeviceDebugger
             AddToScene();
         }
 
-        [MenuItem("Tools/Device Debugger/Add to Scene")]
+        [MenuItem("Tools/ThanhDV/Device Debugger/Remove from Scene")]
+        static void RemoveFromScene()
+        {
+            var ddControllers = Object.FindObjectsByType<DeviceDebuggerController>(FindObjectsSortMode.None);
+
+            if (ddControllers.Length <= 0)
+            {
+                Debug.Log($"<color=yellow>[DeviceDebugger] No DeviceDebugger instances found in the scene to remove.</color>");
+                return;
+            }
+
+            foreach (var controller in ddControllers)
+            {
+                Object.DestroyImmediate(controller.gameObject);
+            }
+
+            Debug.Log($"<color=green>[DeviceDebugger] Removed {ddControllers.Length} DeviceDebugger instance(s) from the scene.</color>");
+        }
+
+        [MenuItem("Tools/ThanhDV/Device Debugger/Add to Scene")]
         static void AddToScene()
         {
             // Find the script asset by type to get its path reliably.

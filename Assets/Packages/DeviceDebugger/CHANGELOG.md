@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.0.2] - 2025-10-03
+ Add [MenuItem("Tools/Device Debugger/Remove from Scene")] 
 
 ## [1.0.1] - 2025-09-25
 - Remove [MenuItem("Tools/Graphy/Create Prefab Variant")]
