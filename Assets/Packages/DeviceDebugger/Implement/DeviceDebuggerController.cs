@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using IngameDebugConsole;
 using UnityEngine;
 using UnityEngine.UI;

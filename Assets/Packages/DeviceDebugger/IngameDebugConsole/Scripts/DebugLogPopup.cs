@@ -3,9 +3,8 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using TMPro;
-using ThanhDV.DeviceDebugger;
 
-#if UNITY_EDITOR && UNITY_2021_1_OR_NEWER
+#if UNITY_EDITOR
 using Screen = UnityEngine.Device.Screen; // To support Device Simulator on Unity 2021.1+
 #endif
 
@@ -26,7 +25,6 @@ namespace IngameDebugConsole
 		// Canvas group to modify visibility of the popup
 		private CanvasGroup canvasGroup;
 
-#pragma warning disable 0649
 		[SerializeField]
 		private DebugLogManager debugManager;
 
@@ -43,7 +41,6 @@ namespace IngameDebugConsole
 		private Color alertColorWarning;
 		[SerializeField]
 		private Color alertColorError;
-#pragma warning restore 0649
 
 		// Number of new debug entries since the log window has been closed
 		private int newInfoCount = 0, newWarningCount = 0, newErrorCount = 0;
@@ -58,6 +55,12 @@ namespace IngameDebugConsole
 
 		public bool IsVisible { get; private set; }
 
+		private Vector2 SavedNormalizedPosition
+		{
+			get => PlayerPrefs.HasKey("IDGPPos") ? JsonUtility.FromJson<Vector2>(PlayerPrefs.GetString("IDGPPos", "{}")) : new Vector2(0.5f, 0f); // Right edge by default
+			set => PlayerPrefs.SetString("IDGPPos", JsonUtility.ToJson(value));
+		}
+
 		private void Awake()
 		{
 			popupTransform = (RectTransform)transform;
@@ -67,16 +70,12 @@ namespace IngameDebugConsole
 			normalColor = backgroundImage.color;
 
 			halfSize = popupTransform.sizeDelta * 0.5f;
+			normalizedPosition = SavedNormalizedPosition;
+		}
 
-			Vector2 pos = popupTransform.anchoredPosition;
-			if (pos.x != 0f || pos.y != 0f)
-			{
-				normalizedPosition = pos.normalized; // Respect the initial popup position set in the prefab
-			}
-			else
-			{
-				normalizedPosition = new Vector2(0.5f, 0f); // Right edge by default
-			}
+		protected void OnDestroy()
+		{
+			SavedNormalizedPosition = normalizedPosition;
 		}
 
 		public void NewLogsArrived(int newInfo, int newWarning, int newError)
