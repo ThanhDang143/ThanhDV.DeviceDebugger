@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ThanhDV.DeviceDebugger
 {
@@ -19,45 +21,68 @@ namespace ThanhDV.DeviceDebugger
 
             if (ddControllers.Length <= 0)
             {
-                Debug.Log($"<color=yellow>[DeviceDebugger] No DeviceDebugger instances found in the scene to remove.</color>");
+                DebugLog.Warning("No DeviceDebugger instances found in the scene to remove.");
                 return;
             }
 
             foreach (var controller in ddControllers)
             {
-                Object.DestroyImmediate(controller.gameObject);
+                Undo.DestroyObjectImmediate(controller.gameObject);
             }
 
-            Debug.Log($"<color=green>[DeviceDebugger] Removed {ddControllers.Length} DeviceDebugger instance(s) from the scene.</color>");
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+
+            DebugLog.Success($"Removed {ddControllers.Length} DeviceDebugger instance(s) from the scene.");
         }
 
         [MenuItem("Tools/ThanhDV/Device Debugger/Add to Scene")]
         static void AddToScene()
         {
+            if (Application.isPlaying)
+            {
+                DebugLog.Warning("Add to Scene is disabled in Play Mode. Stop Play Mode to add and save into the scene.");
+                return;
+            }
+
             // Find the script asset by type to get its path reliably.
             string scriptPath = GetScriptPath(typeof(DDMenuItem));
             if (string.IsNullOrEmpty(scriptPath))
             {
-                Debug.Log($"<color=red>[DeviceDebugger] Could not find the DDMenuItem script asset path!!!</color>");
+                DebugLog.Error("Could not find the DDMenuItem script asset path!!!");
                 return;
             }
 
             string scriptDirectory = System.IO.Path.GetDirectoryName(scriptPath);
-            string prefabPath = System.IO.Path.Combine(scriptDirectory, "DeviceDebugger.prefab");
+            // AssetDatabase paths must use forward slashes.
+            scriptDirectory = (scriptDirectory ?? string.Empty).Replace('\\', '/');
+            string prefabPath = $"{scriptDirectory}/DeviceDebugger.prefab";
 
             // Load the prefab from the determined path
             GameObject originalPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
             if (originalPrefab == null)
             {
-                Debug.Log($"<color=red>[DeviceDebugger] Prefab not found at path: {prefabPath}. Please make sure DeviceDebugger.prefab is in the same directory as DDMenuItem.cs!!!</color>");
+                DebugLog.Error($"Prefab not found at path: {prefabPath}. Please make sure DeviceDebugger.prefab is in the same directory as DDMenuItem.cs!!!");
                 return;
             }
 
-            GameObject objectSource = Object.Instantiate(originalPrefab) as GameObject;
+            var activeScene = SceneManager.GetActiveScene();
+
+            GameObject objectSource = PrefabUtility.InstantiatePrefab(originalPrefab, activeScene) as GameObject;
+            if (objectSource == null)
+            {
+                objectSource = Object.Instantiate(originalPrefab);
+                SceneManager.MoveGameObjectToScene(objectSource, activeScene);
+            }
+
+            Undo.RegisterCreatedObjectUndo(objectSource, "Add DeviceDebugger");
             objectSource.name = "DeviceDebugger";
 
-            Debug.Log($"<color=green>[DeviceDebugger] GameObject DeviceDebugger instantiated in current scene!!!</color>");
+            // Ensure scene is marked dirty so Unity shows '*' and prompts to save on scene switch.
+            EditorSceneManager.MarkSceneDirty(activeScene);
+            Selection.activeGameObject = objectSource;
+
+            DebugLog.Success("GameObject DeviceDebugger instantiated in current scene!!!");
         }
 
         /// <summary>

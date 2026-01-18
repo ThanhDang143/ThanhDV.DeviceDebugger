@@ -1,6 +1,6 @@
 {
     "name": "thanhdv.devicedebugger",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "displayName": "ThanhDV's DeviceDebugger",
     "description": "This library contains tools for on-device debugging.",
     "unity": "2022.3",
